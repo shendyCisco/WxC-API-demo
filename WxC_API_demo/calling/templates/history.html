@@ -1,0 +1,10 @@
+{% block history %}
+{% if history_list %}
+{% for call in history_list %}
+<P>Help</P>
+{% endfor %}
+{% else %}
+<p>There is no call history</p>
+{% endif %}
+<p> WAP</p>
+{% endblock %}

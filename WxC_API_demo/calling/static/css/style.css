@@ -1,0 +1,263 @@
+/* Generic Styling */
+
+/* 
+Colours:
+    Behind Page Background: 
+    Background: 
+    
+    Primary: #0d274d
+    Secondary: #1e4471
+    Tertiary: 
+    
+    Primary Hover: #243c5e
+    Secondary Hover: 
+    Tertiary Hover: 
+
+    White: #fff
+    Black: #4d4c4
+
+    Positive: #6ebe4a
+    Negative: #e3241b
+
+    Shadow: box-shadow: 0 2px 5px 0 rgba(0,0,0,.12);
+
+Ratio (golden ratio):
+
+Page = W 100% H 100%
+Header = W 100% H 80px?
+Nav = W 38% H 54%?
+Content = W 62% H 54%?
+Footer = W 100% H 160px?
+
+
+*/
+
+/* MISC */
+body * {
+    font-family: CiscoSansTT, Helvetica, sans-serif;
+}
+body {
+    margin: 0;
+    padding: 0;
+    background-color: #f2f2f2;
+    display: flex;
+    justify-content: center;
+    color: #fff;
+}
+h1,h2,h3,h4,h5,h6 {
+    align-self: center;
+    justify-self: center;
+    color: black;
+    font-family: CiscoSansTT Light, Helvetica, sans-serif;
+}
+.whiteBackgroundText {
+    color: black;
+}
+
+.narrowView {
+    visibility: hidden;
+    position: absolute;
+}
+@media only screen and (max-width: 960px) {
+    .narrowView {
+        visibility: visible;
+        position: relative;
+    }
+    .wideView {
+        visibility: hidden;
+        position: absolute;
+    }
+}
+
+/* Page Sections */
+wrapper {
+    width: 1600px;
+    background-color: #fff;
+    box-shadow: 0 2px 5px 0 rgba(0,0,0,.12);
+    height: 100vh;
+}
+@media only screen and (max-width:1600px) {
+    wrapper {
+        width: 100vw;
+    }
+    
+}
+
+header {
+    width: 100%;
+    height: 80px;
+    box-shadow: 0 2px 5px 0 rgba(0,0,0,.12);
+    overflow: hidden;
+}
+
+midpage {
+    width: 100%;
+    max-height: calc(100vh - 80px);
+}
+
+.left {
+    width: 30%;
+    min-width: 270px;
+    background-color: #1e4471;
+}
+.right {
+    width: 70%;
+    min-width: 320px;
+}
+.left, .right {
+    height: calc(100vh - 80px);
+    overflow: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+
+/* Generic Formatting */
+.flex {
+    display: flex;
+}
+.flex-grow {
+    flex-grow: 1;
+}
+
+.flex-col {
+    flex-direction: column;
+}
+.flex-row {
+    flex-direction: row;
+}
+.flex-wrap {
+    flex-wrap: wrap;
+}
+
+.centered {
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+.push-apart {
+    justify-content: space-between;
+}
+.space-around {
+    justify-content: space-around;
+}
+
+.spacer {
+    height: 1rem;
+}
+
+
+/* Generic Form Styling */
+.button {
+    padding: 0.5rem 1rem;
+    border-radius: 2rem;
+    border: #00bceb solid 1px;
+    background-color: #00bceb;
+    color: #0d274d;
+    font-size: 16px;
+    margin: 0.5rem;
+}
+.button:hover {
+    background-color: #33c9ef;
+    border: #33c9ef solid 1px;
+}
+.dark {
+    border: #0d274d solid 1px;
+    background-color: #0d274d;
+    color: #fff;
+}
+.dark:hover {
+    background-color: #081931;
+    border: #081931 solid 1px;
+}
+.positive {
+    background-color: #6ebe4a;
+    border: #6ebe4a solid 1px;
+}
+.positive:hover {
+    background-color: #4b8032;
+    border: #4b8032 solid 1px;
+}
+.negative {
+    background-color: #E3241B;
+    border: #E3241B solid 1px;
+}
+.negative:hover {
+    background-color: #ac1c14;
+    border: #ac1c14 solid 1px;
+}
+
+.textbox {
+    padding: 0.5rem 1rem;
+    border-radius: 2rem;
+    text-align: left;
+    background-color: #fff;
+    font-family: CiscoSansTT Light, Arial, sans-serif;
+    border: 1px solid #676767;
+    width: 20vw;
+    max-width: 226px;
+    font-size: 16px;
+}
+
+/* Token Link form */
+.tokenLink {
+    padding: 0 1rem;
+}
+.tokenLink p {
+    display: inline-block;
+}
+.tokenLink form {
+    display: inline-block;
+}
+.tokenLink-container {
+    padding: 1rem 0;
+    border-bottom: #fff 1px solid;
+}
+
+/* Call History */
+.history-entry {
+    margin: 0 1rem 0 3rem;
+    border-left: #fff 1px solid;
+    margin-top: 1rem;
+    padding: 0 1rem;
+}
+.history-entry:hover {
+    background-color: #243c5e;
+}
+.history-entry p {
+    margin: 0;
+}
+
+recieved, placed, missed {
+    display: inline;
+}
+recieved {
+    color: green;
+}
+placed {
+    color: grey;
+}
+missed {
+    color: red;
+}
+
+
+/* Dial */
+
+
+/* Active Calls */
+.call {
+    width: 250px;
+    height: 250px;
+    padding: 1rem;
+    border-radius: 2rem;
+    border: #4d4c4c solid 1px;
+    background-color: #4d4c4c;
+    margin: 1rem;
+}
+.call .button {
+    width: 95px;
+}
+.connected {
+    background-color: #00bceb;
+    border: #00bceb solid 1px;
+}
