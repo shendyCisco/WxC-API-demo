@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -14,91 +13,27 @@
             <header>
                 <h1>Cisco</h1>
             </header>
-            <midpage class="flex flex-grow flex-row">
-                <div class="left">
-                    <div class="tokenLink flex-row">
-                        <div class="tokenLink-container flex centered space-around flex-wrap">
-                            {% if tokenOwner %}
-                            <p>Logged in as:</p>
-                            <p>{{ tokenOwner }}</p>
-                            <form action="{% url 'log_out' %}">
-                                {% csrf_token %}
-                                <input type="submit" value="Logout" class="button">
-                            </form>
-                        {% else %}
-                            <form action="{% url 'log_in' %}" method="POST">
-                                {% csrf_token %}
-                                <p>To login please enter a token:</p>
-                                <input type="text" class="textbox" name="tokenText">
-                                <input type="submit" class="button positive">
-                            </form>
-                            {% endif %}
-                        </div>
-                    </div>
-                    <div class="history flex-col flex-grow">
-                        {% if history_list %}
-                        {% for call in history_list %}
-                        <div class="history-entry flex flex-row push-apart">
-                            <p>{% if call.type == "recieved" %}<recieved>Recieved</recieved>{% elif call.type == "placed" %}<placed>Placed</placed>{% else %} <missed>Missed</missed> {% endif %} {{call.name }}
-                                <br>
-                                {{ call.number }}
-                                <br>
-                                {{ call.time }}
-                            </p>
-                            <form class="flex centered">
-                                {% csrf_token %}
-                                <input type="submit" value="Dial" class="button positive">
-                            </form>
-                        </div>
-                        {% endfor %}
-                        <div class="spacer"></div>
-                        {% else %}
-                        <p>There is no call history</p>
-                        {% endif %}
-                    </div>
+            <midpage class="flex flex-grow">
+                <div class="login_container flex-grow centered whiteBackgroundText">
+                    <h2>Webex Call Controls API Demo Platform</h2>
+                    <p>Please sign in with your Webex account.</p>
+                    <a id="redirect_a" href = "https://webexapis.com/v1/authorize?client_id=Cd612384d48b1561c4ae0066841a03d6eeb0ed0cf2b2d91308ec76d493cac3667&response_type=code&redirect_uri=http%3A%2F%2F192.168.1.105%3A8000%2Fcalling%2Fredirect%2F&scope=spark%3Acalls_write%20spark%3Akms%20spark%3Apeople_read%20spark%3Acalls_read&state=AccessGranted"><input type="submit" value="Sign in to Webex" class="button positive"></a>
                 </div>
-                <div class="right">
-                    {% block dial %}{% endblock %}
-                    <div class="activeCalls centered flex flex-row flex-wrap">
-                        {% if activeCall_list %}
-                        {% for activeCall in activeCall_list %}
-                        <div class="call {% if activeCall.state == 'connected' %}connected{% endif %}">
-                            <div>
-                                <p>
-                                    {{ activeCall.remoteParty.name }} [{{ activeCall.state }}]
-                                    <br>
-                                    {{ activeCall.remoteParty.number }}
-                                </p>
-                            </div>
-                            <div class="flex space-around">
-                                <form class="flex flex-row flex-wrap centered">
-                                    {% csrf_token %}
-                                    <div class="flex flex-col">
-                                        {% if activeCall.state == "connected"%}
-                                        <input type="button" value="Hold" class="button dark">
-                                        {% elif activeCall.state == "held" %}
-                                        <input type="button" value="Resume" class="button dark">
-                                        {% endif %}
-                                        <input type="button" value="Transfer" class="button dark">  
-                                    </div>
-                                    <div class="flex flex-col">
-                                        <input type="button" value="Park" class="button dark">  
-                                        <input type="button" value="Divert" class="button dark">  
-                                    </div>
-                                    <input type="button" value="Hangup" class="button negative dark">  
-                                </form>
-                            </div>
-                        </div>
-                        {% endfor %}
-                        {% else %}
-                        <p class="whiteBackgroundText">No active calls.</p>
-                        {% endif %}
-                    </div>
+                <div class="about_container">
+
                 </div>
             </midpage>
-            <!-- <footer>
-                
-            </footer> -->
         </wrapper>
     </body>
+    <script>
+        // var loc = window.location
+        // var endpoint = loc.protocol + "//" + loc.host + loc.pathname
+
+        // var redirect_a = document.getElementById('redirect_a');
+
+        // redirect_a.href = "https://webexapis.com/v1/authorize?client_id=Cd612384d48b1561c4ae0066841a03d6eeb0ed0cf2b2d91308ec76d493cac3667&response_type=code&redirect_uri=http%3A%2F%2F192.168.1.105%3A8000%2Fredirect%2F&scope=spark%3Aall%20spark%3Akms&state=set_state_here"
+        // b = "https://webexapis.com/v1/authorize?client_id=Cd612384d48b1561c4ae0066841a03d6eeb0ed0cf2b2d91308ec76d493cac3667&response_type=code&redirect_uri=" + endpoint + "&scope=spark%3Aall%20spark%3Akms&state=AccessGranted"
+        
+
+    </script>
 </html>

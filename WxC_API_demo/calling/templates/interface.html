@@ -1,0 +1,261 @@
+
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta charset="utf-8">
+        <meta id="token" value="{{ token }}">
+        {% load static %}
+        <link rel="stylesheet" href="{% static 'css/style.css' %}">
+        <title>WxC API demo</title>
+        <script src="{% static 'js/interface.js' %}"></script>
+    </head>
+    <body>
+        <div id="LightBox_Container">
+        </div>
+        <wrapper class="flex-col">
+            <header id="header">
+                <h1>Cisco</h1>
+            </header>
+            <midpage id="midpage" class="flex flex-grow flex-row">
+                <div class="left">
+                    <div class="tokenLink flex-row">
+                        <div class="tokenLink-container flex centered space-around flex-wrap">
+                            {% if tokenOwner %}
+                            <p>Logged in as:</p>
+                            <p>{{ tokenOwner }}</p>
+                            <form action="{% url 'log_out' %}">
+                                {% csrf_token %}
+                                <input type="submit" value="Logout" class="button">
+                            </form>
+                        {% else %}
+                        <p>Please sign in with your Webex account.</p>
+                        <a id="redirect_a" href = "https://webexapis.com/v1/authorize?client_id=Cd612384d48b1561c4ae0066841a03d6eeb0ed0cf2b2d91308ec76d493cac3667&response_type=code&redirect_uri=http%3A%2F%2F192.168.1.105%3A8000%2Fcalling%2Fredirect%2F&scope=spark%3Acalls_write%20spark%3Akms%20spark%3Apeople_read%20spark%3Acalls_read&state=AccessGranted"><input type="submit" value="Sign in to Webex" class="button positive"></a>    
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="history flex-col flex-grow">
+                        {% if history_list %}
+                        {% for call in history_list %}
+                        <div class="history-entry flex flex-row push-apart">
+                            <p>{% if call.type == "received" %}<recieved>Recieved</recieved>{% elif call.type == "placed" %}<placed>Placed</placed>{% else %} <missed>Missed</missed> {% endif %} {{call.name }}
+                                <br>
+                                {{ call.number }}
+                                <br>
+                                {{ call.time }}
+                            </p>
+                            <!-- <form class="flex centered" action="{% url 'dial' %}" method="POST">
+                                {% csrf_token %}
+                                <button type="submit" name="numberSubmit" value="{{ call.number }}" class="button positive">Dial</button>
+                            </form> -->
+                            <button onclick="DoCommand('dial', '{{ call.number }}')" type="submit" name="numberSubmit" value="{{ call.number }}" class="button positive">Dial</button>
+                        </div>
+                        {% endfor %}
+                        <div class="spacer"></div>
+                        {% else %}
+                        <div class="centered">
+                            <p>There is no call history</p>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="right">
+                    <div class="dial-block flex flex-row">
+                        <div class="flex centered">
+                            <input id="dial_address" type="text" class="textbox" autocomplete="off" placeholder="Number or Extension">
+                            <input onclick="CustomDial()" type="submit" value="Dial" class="button positive">
+                        </div>
+                        <div class="flex flex-grow centered">
+                            <h3>Webex Call Controls API Demo Platform</h3>
+                        </div>
+                    </div>
+                    <div class="activeCalls centered flex flex-row flex-wrap" id="Call_container">
+                        {% if activeCall_list %}
+                        <p class="whiteBackgroundText hidden" id="No_calls">No active calls.</p>
+                        {% for activeCall in activeCall_list %}
+                        <!-- Need to use ID provided by call list rather than API, 'z' is the wrong one -->
+                        <div class="call whiteBackgroundText {% if activeCall.state == 'connected' %}connected{% endif %}" id="{{ activeCall.id }}">
+                            <div>
+                                <p>
+                                    {{ activeCall.remoteParty.name }} [{{ activeCall.state }}]
+                                    <br>
+                                    {{ activeCall.remoteParty.number }}
+                                </p>
+                            </div>
+                            <div class="flex space-around">
+                                <form class="flex flex-row flex-wrap centered">
+                                    {% csrf_token %}
+                                    <div class="flex flex-col">
+                                        {% if activeCall.state == "connected"%}
+                                        <input type="button" value="Hold" class="button dark" onclick="DoCommand('hold', this.parentNode.parentNode.parentNode.parentNode.id)">
+                                        {% elif activeCall.state == "held" %}
+                                        <input type="button" value="Resume" class="button dark" onclick="DoCommand('resume', this.parentNode.parentNode.parentNode.parentNode.id)">
+                                        {% endif %}
+                                        <input type="button" value="Transfer" class="button dark" onclick="ShowLightBox('transfer', this.parentNode.parentNode.parentNode.parentNode.id)">  
+                                    </div>
+                                    <div class="flex flex-col">
+                                        <input type="button" value="Park" class="button dark" onclick="ShowLightBox('park', this.parentNode.parentNode.parentNode.parentNode.id)">  
+                                        <input type="button" value="Divert" class="button dark" onclick="ShowLightBox('divert', this.parentNode.parentNode.parentNode.parentNode.id)">  
+                                    </div>
+                                    <input type="button" value="Hangup" class="button negative dark" onClick="DoCommand('hangup', this.parentNode.parentNode.parentNode.id)">  
+                                </form>
+                            </div>
+                        </div>
+                        {% endfor %}
+                        {% else %}
+                        <p class="whiteBackgroundText shown" id="No_calls">No active calls.</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </midpage>
+            <!-- <footer>
+                
+            </footer> -->
+        </wrapper>
+    </body>
+    <!-- <script>
+
+        var loc = window.location
+
+        var wsStart = 'ws://'
+        if (loc.protocol == 'https:'){
+            wsStart = 'wss://'
+        }
+        
+        var endpoint = wsStart + loc.host + loc.pathname
+        console.log(endpoint)
+
+        var socket = new WebSocket(endpoint)
+        console.log(socket)
+        
+        socket.onmessage = function(e){
+            console.log("message", e)
+            try {
+                var data = JSON.parse(e.data);
+            }catch {
+                var data = e.data;
+            }
+                
+            console.log(data)
+            if (data.command == "call_update") {
+                console.log("Sending to UpdateCall")
+                UpdateCall(data.data);
+            }
+        }
+        socket.onopen = function(e){
+            console.log("open", e)
+            //socket.send("Test Return Data")
+        }
+        socket.onerror = function(e){
+            console.log("error", e)
+        }
+        socket.onclose = function(e){
+            console.log("close", e)
+        }
+
+        function DoCommand(command, data) {
+            var payload = `${command}_${data}`
+            console.log("send", payload)
+            socket.send(payload)
+        }
+
+        function CustomDial() {
+            var address = document.getElementById('dial_address').value;
+            if (address != "") {
+                console.log("Dialing: "+address)
+                var payload = `dial_${address}`
+                socket.send(payload)
+            }
+        }
+
+        function UpdateCall(data) {
+            console.log("Inside UpdateCall")
+            console.log(data)
+            if (data.state == 'connected') {
+                connected = 'connected'
+                hold_resume = `<input type="button" value="Hold" class="button dark" onClick="DoCommand('hold', this.parentNode.parentNode.parentNode.parentNode.id)">`
+            } else if (data.state == 'held') {
+                connected = ''
+                hold_resume = `<input type="button" value="Resume" class="button dark" onClick="DoCommand('resume', this.parentNode.parentNode.parentNode.parentNode.id)">`
+            } else if (data.state == 'disconnected') {
+                console.log("In disconnect")
+                document.getElementById(data.callId).remove();
+                CheckAnyCalls()
+                return;
+            } else {
+                connected = ''
+                hold_resume = '<input type="button" value="Hold" class="button dark">'
+            }
+
+            try {
+                var target = document.getElementById(data.callId); //Edit existing call
+                target.innerHTML = (
+                    `<div>
+                        <p>
+                            ${data.remoteParty.name} [${data.state}]
+                            <br>
+                            ${data.remoteParty.number}
+                        </p>
+                    </div>
+                    <div class="flex space-around">
+                        <form class="flex flex-row flex-wrap centered">
+                            {% csrf_token %}
+                            <div class="flex flex-col">
+                                ${hold_resume}
+                                <input type="button" value="Transfer" class="button dark">  
+                            </div>
+                            <div class="flex flex-col">
+                                <input type="button" value="Park" class="button dark">  
+                                <input type="button" value="Divert" class="button dark">  
+                            </div>
+                            <input type="button" value="Hangup" class="button negative dark" onClick="DoCommand('hangup', this.parentNode.parentNode.parentNode.id)">  
+                        </form>
+                    </div>`
+                )
+                target.classList = `call ${connected}`
+                console.log("Edit Made")
+            } catch (error) {
+                console.log("Catch Running")
+                //Create New call
+                document.getElementById('Call_container').innerHTML = (
+                    document.getElementById('Call_container').innerHTML +
+                    `<div class="call ${connected}" id="${data.callId}">
+                        <div>
+                            <p>
+                                ${data['remoteParty']['name']} [${data['state']}]
+                                <br>
+                                ${data.remoteParty.number}
+                            </p>
+                        </div>
+                        <div class="flex space-around">
+                            <form class="flex flex-row flex-wrap centered">
+                                {% csrf_token %}
+                                <div class="flex flex-col">
+                                    ${hold_resume}
+                                    <input type="button" value="Transfer" class="button dark">  
+                                </div>
+                                <div class="flex flex-col">
+                                    <input type="button" value="Park" class="button dark">  
+                                    <input type="button" value="Divert" class="button dark">  
+                                </div>
+                                <input type="button" value="Hangup" class="button negative dark">  
+                            </form>
+                        </div>
+                    </div>`
+                )
+            }
+            CheckAnyCalls()
+        }
+        function CheckAnyCalls() {
+            divs = document.getElementsByClassName('call')
+            console.log(`Found Div's ${divs}`)
+            if (document.getElementById('Call_container').contains(divs[0])) {
+                document.getElementById('No_calls').className = "whiteBackgroundText hidden";
+            } else {
+                document.getElementById('No_calls').className = "whiteBackgroundText shown";
+            }
+            
+        }
+
+    </script> -->
+</html>

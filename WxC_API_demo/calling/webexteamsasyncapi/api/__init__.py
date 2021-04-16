@@ -7,6 +7,9 @@ from .locations import LocationsAPI
 from .memberships import MembershipAPI
 from .people import PeopleAPI
 from .rooms import RoomsAPI
+from .call_controls import Call_ControlsAPI
+from .webhooks import WebhookAPI
+#from .access_token import Access_tokenAPI
 from ..rest import RestSession
 
 log = logging.getLogger(__name__)
@@ -26,6 +29,9 @@ class WebexTeamsAsyncAPI:
         self.locations = LocationsAPI(self._rest_session)
         self.memberships = MembershipAPI(self._rest_session)
         self.rooms = RoomsAPI(self._rest_session)
+        self.call_controls = Call_ControlsAPI(self._rest_session)
+        self.webhooks = WebhookAPI(self._rest_session)
+        #self.access_token = Access_tokenAPI(self._rest_session)
 
     async def close(self):
         log.debug(f'{self}.close()')

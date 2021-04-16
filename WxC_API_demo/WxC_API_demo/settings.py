@@ -25,7 +25,8 @@ SECRET_KEY = '^@g*fo@kab+%!o@seo69^obr&3t#hwkfwk=3wm63v^27krj#mr'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["192.168.56.105"]
+ALLOWED_HOSTS = ["127.0.0.1", "192.168.1.105", "80.229.12.42"]
+#["192.168.56.106","192.168.1.138","80.229.12.42"]
 
 
 # Application definition
@@ -37,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'channels',
     'calling',
 ]
 
@@ -71,16 +73,25 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'WxC_API_demo.wsgi.application'
+ASGI_APPLICATION = 'WxC_API_demo.routing.application'
 
 
 # Database
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
 
 DATABASES = {
-    # 'default': {
-    #     'ENGINE': 'django.db.backends.sqlite3',
-    #     'NAME': BASE_DIR / 'db.sqlite3',
-    # }
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'exampleDB',
+        'USER': 'djangouser',
+        'PASSWORD': 'djangopass',
+        'HOST': 'localhost',
+        'PORT': '',
+        'STORAGE_ENGINE': 'MyISAM / INNODB / ETC',
+        'OPTIONS': {
+            "init_command": "SET foreign_key_checks = 0;",
+        },
+    }
 }
 
 
@@ -121,3 +132,13 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
 STATIC_URL = '/static/'
+
+#channel layers
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [("localhost", 6379)],
+        },
+    },
+}

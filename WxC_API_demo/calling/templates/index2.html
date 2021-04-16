@@ -1,0 +1,31 @@
+
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta charset="utf-8">
+        <meta id="token" value="{{ token }}">
+        {% load static %}
+        <link rel="stylesheet" href="{% static 'css/style.css' %}">
+        <title>WxC API demo</title>
+    </head>
+    <body>
+        <div class="tokenLink-container flex centered space-around flex-wrap">
+            {% if tokenOwner %}
+            <p>Logged in as:</p>
+            <p>{{ tokenOwner }}</p>
+            <form action="{% url 'log_out' %}">
+                {% csrf_token %}
+                <input type="submit" value="Logout" class="button">
+            </form>
+        {% else %}
+            <form action="{% url 'log_in' %}" method="POST">
+                {% csrf_token %}
+                <p>To login please enter a token:</p>
+                <input type="text" class="textbox" name="tokenText" autocomplete="off">
+                <input type="submit" class="button positive">
+            </form>
+            {% endif %}
+        </div>
+    </body>
+</html>

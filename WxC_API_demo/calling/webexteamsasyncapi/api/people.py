@@ -28,15 +28,15 @@ class Person(CamelModel):
     last_name: Optional[str]
     avatar: Optional[str]
     org_id: str
-    roles: List[str]
-    licenses: List[str]
+    roles: Optional[List[str]]
+    licenses: Optional[List[str]]
     created: str
     last_modified: str
     timezone: Optional[str]
     last_activity: Optional[str]
     status: str
-    invite_pending: bool
-    login_enabled: bool
+    invite_pending: Optional[bool]
+    login_enabled: Optional[bool]
     type: str
 
     @property

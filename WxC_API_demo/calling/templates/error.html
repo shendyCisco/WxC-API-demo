@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta charset="utf-8">
+        <meta id="token" value="{{ token }}">
+        {% load static %}
+        <link rel="stylesheet" href="{% static 'css/style.css' %}">
+        <title>WxC API demo</title>
+    </head>
+    <body>
+        <wrapper class="flex-col">
+            <header>
+                <h1>Cisco</h1>
+            </header>
+            <midpage class="flex flex-grow centered">
+                <div class="whiteBackgroundText"> 
+                    {% if message %}
+                    <p>{{ message }}</p>
+                    {% endif %}
+                    <a href="{% url 'index' %}"><input type="submit" value="Go Back" class="button positive"></a>
+                </div>
+            </midpage>
+        </wrapper>
+    </body>
+</html>

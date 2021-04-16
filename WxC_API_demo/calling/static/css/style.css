@@ -40,9 +40,9 @@ body {
     margin: 0;
     padding: 0;
     background-color: #f2f2f2;
+    color: #fff;
     display: flex;
     justify-content: center;
-    color: #fff;
 }
 h1,h2,h3,h4,h5,h6 {
     align-self: center;
@@ -83,6 +83,33 @@ wrapper {
     
 }
 
+.LightBox_Background {
+    position: absolute;
+    left: 0px;
+    width: 100vw;
+    height: 100vh;
+    background-color: #fff;
+    opacity: 10%;
+    z-index: 9;
+}
+.LightBox_Wrapper {
+    position: absolute;
+    left: 0px;
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.LightBox {
+    max-width: 800px;
+    background-color: #eee;
+    box-shadow: 0 2px 5px 0 rgba(0,0,0,.12);
+    padding: 2rem;
+    border-radius: 5px;
+    z-index: 10;
+}
+
 header {
     width: 100%;
     height: 80px;
@@ -110,6 +137,10 @@ midpage {
     -webkit-overflow-scrolling: touch;
 }
 
+.dial-block {
+    background-color: #00bceb;
+    padding: 1rem;
+}
 
 /* Generic Formatting */
 .flex {
@@ -145,8 +176,25 @@ midpage {
     height: 1rem;
 }
 
+.shown {
+    visibility: visible;
+    position: relative;
+}
+.hidden {
+    visibility: hidden;
+    position: absolute;
+}
+
+.blurred {
+    filter: blur(7px);
+}
+
 
 /* Generic Form Styling */
+.formItemMargin {
+    margin: 0.5rem;
+}
+
 .button {
     padding: 0.5rem 1rem;
     border-radius: 2rem;
@@ -197,6 +245,84 @@ midpage {
     max-width: 226px;
     font-size: 16px;
 }
+
+.dropdown {
+    padding: 0.5rem 1rem;
+    border-radius: 2rem;
+    min-width: 150px;
+    text-align: center;
+    background-color: #fff;
+    font-family: CiscoSansTT Light, Arial, sans-serif;
+    font-size: 16px;
+}
+.dropdown option {
+    color: #676767;
+    font-size: 14px;
+    font-family: CiscoSansTT Light, Arial, sans-serif;
+    text-align: right;
+}
+
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 60px;
+    height: 34px;
+}
+  
+.switch input { 
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+  
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    -webkit-transition: .4s;
+    transition: .4s;
+    border-radius: 34px;
+}
+  
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 26px;
+    width: 26px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    -webkit-transition: .4s;
+    transition: .4s;
+    border-radius: 50%;
+}
+  
+input:checked + .slider {
+    background-color: #00bceb;
+}
+  
+input:focus + .slider {
+    box-shadow: 0 0 1px #00bceb;
+} 
+  
+input:checked + .slider:before {
+    -webkit-transform: translateX(26px);
+    -ms-transform: translateX(26px);
+    transform: translateX(26px);
+}
+
+/* Rounded sliders */
+/* .slider.round {
+    border-radius: 34px;
+  }
+  
+  .slider.round:before {
+    border-radius: 50%;
+  } */
 
 /* Token Link form */
 .tokenLink {
@@ -249,15 +375,18 @@ missed {
     width: 250px;
     height: 250px;
     padding: 1rem;
-    border-radius: 2rem;
-    border: #4d4c4c solid 1px;
-    background-color: #4d4c4c;
+    /* border-radius: 2rem; */
+    border: #eee solid 1px;
+    background-color: #eee;
+    /* border: rgba(77,77,77,.3) solid 1px; */
+    /* background-color: rgba(77,77,77,.3); */
     margin: 1rem;
+    box-shadow: 0 2px 5px 0 rgba(0,0,0,.12);
 }
 .call .button {
     width: 95px;
 }
 .connected {
-    background-color: #00bceb;
-    border: #00bceb solid 1px;
+    background-color: #6ebe4a;
+    border: #6ebe4a solid 1px;
 }
