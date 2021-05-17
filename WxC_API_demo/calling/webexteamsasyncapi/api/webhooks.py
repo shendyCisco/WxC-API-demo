@@ -21,13 +21,14 @@ class WebhookAPI:
         self._session = session
         self._endpoint = self._session.endpoint('webhooks')
 
-    def list(self, max: int = None) -> AsyncGenerator[Webhook, None]:
+    async def list(self, max: int = None) -> AsyncGenerator[Webhook, None]:
         
         params = {to_camel(k): v for k, v in locals().items() if v is not None}
         params.pop('self')
 
         url = self._endpoint
-        return self._session.pagination(url=url, params=params, factory=Webhook.parse_obj)
+        #return self._session.pagination(url=url, params=params, factory=Webhook.parse_obj)
+        return await self._session.get(url)
 
     async def create(self, name: str = None, target_url: str = None,
                         resource: str = None , 

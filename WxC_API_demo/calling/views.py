@@ -6,14 +6,14 @@ from calling.webexteamsasyncapi import WebexTeamsAsyncAPI
 import asyncio
 import json
 import requests
+import uuid
+import base64
 from dateutil.parser import parse
 
 from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync, sync_to_async
 
 from calling import urls
-
-import dateutil.parser
 
 from calling.models import WebexUserSession
 
@@ -24,6 +24,8 @@ def index(request):
     else:
         token = request.session.get('token', None)
         tokenOwner = request.session.get('tokenOwner', None)
+        # request.session.delete("tokenOwner")
+        # request.session.delete("token")
 
         if token != None:
             return redirect(f"/calling/interface")
@@ -32,7 +34,7 @@ def index(request):
     return render(request, 'index.html')
 
 #Interface
-def interface(request):
+def interface(request, session_id = None):
     #get call history
     async def get_call_history():
         async with WebexTeamsAsyncAPI(access_token=token) as api:
@@ -50,6 +52,9 @@ def interface(request):
             except:
                 print(f"get_calls failed:")
                 return ["Failed"]
+        
+    def takeTime(elem):
+        return elem.time
 
     token = request.session.get('token', None)
     print(token)
@@ -76,15 +81,18 @@ def interface(request):
         else:
             return render(request, 'error.html', context={'message': 'There was a problem retrieving your information, please make sure your account has the correct priviledges.'})
 
-            
+        print(history_list[0].time)
+        print(len(history_list))
+        for i in range(0,len(history_list)):
+            parsedDate = parse(str(history_list[i].time))
+            history_list[i].time = parsedDate.strftime("%B %d, %Y, %H:%M %p")
+        
 
-            # for i in history_list.items:
-            #     parsedDate = dateutil.parser.parse(str(history_list[i]["time"]))
-            #     history_list[i]["time"] = parsedDate
+        history_list.sort(reverse=True, key=takeTime)
     
 
     context = {
-      "history_list" : history_list.items,
+      "history_list" : history_list,
       "activeCall_list" : call_list,
       "tokenOwner" : tokenOwner,
     }
@@ -92,27 +100,32 @@ def interface(request):
 
 
 #Logging in/out
-def log_in(request):
+# def log_in(request):
 
-    async def get_name():
-        async with WebexTeamsAsyncAPI(access_token=token) as api:
-            me = await api.people.me()
-            print(me)
-            return f'{me.first_name} {me.last_name}'
+#     async def get_name():
+#         async with WebexTeamsAsyncAPI(access_token=token) as api:
+#             me = await api.people.me()
+#             print(me)
+#             return f'{me.first_name} {me.last_name}'
 
-    if request.method == "POST":
-        token = request.POST.get("tokenText")
-        people_me_name = asyncio.run(get_name())
-        request.session["token"] = token
-        request.session["tokenOwner"] = people_me_name
-        request.session.set_expiry(43200)
-        print("Post Ran")
-    print(token)
-    context = {
-        "token" : token,
-        "tokenOwner" : people_me_name,
-    }
-    return redirect(f"/calling/interface/")
+#     if request.method == "POST":
+#         token = request.POST.get("tokenText")
+#         people_me_name = asyncio.run(get_name())
+#         uniqueuid = uuid.uuid4()
+#         request.session["token"] = token
+#         request.session["tokenOwner"] = people_me_name
+#         request.session["uuid"] = uniqueuid
+#         request.session.set_expiry(43200)
+#         #name_split = people_me_name.split()
+#         #url_name = f"{name_split[0]}{name_split[1]}"
+#         print(url_name)
+#         print("Post Ran")
+#     print(token)
+#     context = {
+#         "token" : token,
+#         "tokenOwner" : people_me_name,
+#     }
+#     return redirect(f"/calling/interface/{uniqueuid}")
 
 def log_out(request):
 
@@ -147,14 +160,20 @@ def authenticate(request):
             print("Access Granted!")
             code = request.GET.get('code')
             access_token_r = asyncio.run(generate_token())
-            print(f"Response:\n{access_token_r}")
-            token = access_token_r['access_token']
+            try:
+                token = access_token_r['access_token']
+            except Exception as e:
+                print("Exception: ",e)
+                print(access_token_r)
+                return redirect("/calling/")
             people_me_name = asyncio.run(get_name())
+            #uniqueuid = uuid.uuid4()
             request.session["token"] = token
             request.session["tokenOwner"] = people_me_name
+            #request.session["uuid"] = str(uniqueuid)
             request.session.set_expiry(43200)
 
-            return redirect("/calling/interface/")
+            return redirect(f"/calling/interface/") #{uniqueuid}")
             
         print(request.GET.get('state'))
         return redirect("/calling/") #If state is not what was sent
@@ -196,6 +215,14 @@ def webhook(request):
     request.body - the Raw JSON String we need to use to validate the X-Spark-Signature
     """
 
+    async def get_call_history():
+        async with WebexTeamsAsyncAPI(access_token=token) as api:
+            try:
+                history = await api.call_controls.history() 
+                return history
+            except:
+                return ["Failed"]
+                
     key = b"somesupersecretphrase"
     raw = request.body
 
@@ -209,15 +236,31 @@ def webhook(request):
     if validatedSignature == request.headers.get('X-Spark-Signature'): #Valid Response
         print("==Validated Webhook Response Recieved==")
         r_data = json.loads(raw)
+        print(r_data)
         r_data['command'] = "call_update"
-        r_data['data']['callId'] = r_data['data']['callId'][:19] + "ybjpURUFNOnVzLWVhc3QtMl9h" + r_data['data']["callId"][20:]
+        callId_short_list = base64.b64decode(r_data['data']['callId']+'==').decode('utf-8').split('/')
+        webhookId_list = base64.b64decode(r_data['id']+'==').decode('utf-8').split('/')
+        print(f"Webhook ID: {webhookId_list}")
+        if callId_short_list[2] == "us":
+            callId_short_list[2] = webhookId_list[2]
+        callId_long = callId_short_list.pop(0)
+        for i in callId_short_list:
+            callId_long += f"/{i}"
+        r_data['data']['callId'] = base64.b64encode(bytes(callId_long,'utf-8')).decode('utf-8').strip('=') #creates id by encoding string in base64 utf-8 then converts back to string value and strips '=' off the end
+        
+        print(f"Short CallID List: {callId_short_list}")
+        print(f"Long CallID: {callId_long}")
+        print(f"CallID: {r_data['data']['callId']}")
+        #r_data['data']['callId'] = r_data['data']['callId'][:19] + r_data['id'][19:44] + r_data['data']["callId"][20:]
         channel = WebexUserSession.objects.get(webhook_id=r_data['id'])
         channel_layer = get_channel_layer()
-        print(f"Sending to:\nChannel_name: {channel.channel_name}\nChannel_layer: {channel_layer}")
+        print(f"Sending to:\nChannel_name: {channel.channel_name}\nWebhook ID: {r_data['id']}")
         async_to_sync(channel_layer.send)(channel.channel_name, {
             'type': 'call.update',
             'text': json.dumps(r_data) 
         })
+            
+
     else:
         print("==INVALID Webhook Response Recieved==")
         return HttpResponse(status=403)

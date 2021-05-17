@@ -91,7 +91,14 @@ class Call_ControlsAPI:
         params.pop('self')
         url = f'{self._endpoint}/history'
         r = await self._session.get(url=url, params=params)
-        return History.parse_obj(r)
+        history_list =  History.parse_obj(r)
+        items = history_list.items
+        print(items)
+        #print(type(items))
+        print("BEFORE")
+        #print(type(items[0]))
+        print("AFTER")
+        return items
 
     async def dial(self, destination: str) -> Post_Call:
         params = {to_camel(k): v for k, v in locals().items() if k != 'self' and v is not None}
@@ -114,11 +121,11 @@ class Call_ControlsAPI:
         r = await self._session.post(url=url, json={'callId': call_id}, success={204})
         return r
 
-    async def divert(self, call_id: str, destination: str = None, to_voice_mail: bool = False):
+    async def divert(self, call_id: str, destination: str = None, to_voicemail: bool = False):
         url = f'{self._endpoint}/divert'
         params = {to_camel(k): v for k, v in locals().items() if k != 'self' and v is not None}
         print(params)
-        r = await self._session.post(url=url, json=params)
+        r = await self._session.post(url=url, json=params, success={204})
         return r
 
     async def transfer(self, call_id1: str, call_id2: str):

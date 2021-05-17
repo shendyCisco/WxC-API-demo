@@ -4,3 +4,4 @@ from django.db import models
 class WebexUserSession(models.Model):
     webhook_id = models.CharField(max_length=150)
     channel_name = models.CharField(max_length=150)
+    #group_name = models.CharField(max_length=150)

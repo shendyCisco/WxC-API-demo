@@ -5,6 +5,7 @@ from . import views
 
 urlpatterns = [
     path('', views.index, name="index"),
+    #path("interface/<uuid:session_id>", views.interface, name="interface"),
     path("interface/", views.interface, name="interface"),
     #path('log_in/', views.log_in, name="log_in"),
     path('log_out/', views.log_out, name="log_out"),

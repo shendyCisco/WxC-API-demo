@@ -11,11 +11,14 @@
         <script src="{% static 'js/interface.js' %}"></script>
     </head>
     <body>
-        <div id="LightBox_Container">
-        </div>
         <wrapper class="flex-col">
-            <header id="header">
-                <h1>Cisco</h1>
+            <div id="LightBox_Container">
+            </div>
+            <header id="header" class="flex flex-grow">
+                <!-- <h1>Cisco</h1> -->
+                <svg xmlns="http://www.w3.org/2000/svg" width="108" height="57" viewBox="0 0 108 57" role="img">
+                    <title id="fwt-logo-title">Cisco Systems</title><defs><path d="M0 22.769a2.348 2.348 0 0 0 3.935 1.545c.434-.403.7-.955.744-1.545v-5.2a2.34 2.34 0 0 0-4.679 0v5.2" id="bar_short" class="bar"></path><path d="M12.95 22.769a2.349 2.349 0 0 0 2.34 2.171 2.346 2.346 0 0 0 2.339-2.171V11.112a2.341 2.341 0 0 0-4.679 0V22.77" id="bar_tall" class="bar"></path><path d="M25.832 27.464a2.345 2.345 0 0 0 4.678 0V2.249a2.342 2.342 0 0 0-4.678 0v25.215" id="bar_grande" class="bar"></path><path d="M24.026 56.277v-5.002l-.098.043a9.253 9.253 0 0 1-3.605.915 5.303 5.303 0 0 1-3.63-1.07 4.644 4.644 0 0 1-1.58-2.244 5.395 5.395 0 0 1-.106-3 4.6 4.6 0 0 1 1.609-2.566 4.823 4.823 0 0 1 2.528-1.09 8.332 8.332 0 0 1 4.774.895l.108.056v-5.03l-.228-.061a12.78 12.78 0 0 0-4.552-.596 10.534 10.534 0 0 0-4.065.93 9.29 9.29 0 0 0-3.329 2.572 10.014 10.014 0 0 0-.182 12.18 9.546 9.546 0 0 0 5.292 3.403c2.211.538 4.528.456 6.697-.234l.367-.101" id="cisco_c"></path></defs><g fill="#00bceb" fill-rule="evenodd"><use href="#cisco_c"></use><use href="#cisco_c" x="49.5"></use><path d="M41.69 52.125l-.019 4.308.315.054c.989.185 1.987.313 2.99.385a18.1 18.1 0 0 0 2.642.051c.842-.06 1.675-.218 2.48-.468a6.862 6.862 0 0 0 2.573-1.371 5.19 5.19 0 0 0 1.498-2.148 5.912 5.912 0 0 0-.03-4.324 4.852 4.852 0 0 0-1.343-1.862 5.568 5.568 0 0 0-1.97-1.147l-3.25-1.206a1.742 1.742 0 0 1-.887-.845 1.107 1.107 0 0 1 .036-.986 1.29 1.29 0 0 1 .217-.291 1.75 1.75 0 0 1 .48-.347c.363-.18.755-.293 1.158-.337a6.76 6.76 0 0 1 2.072.022c.81.088 1.613.231 2.402.43l.168.037v-3.974l-.31-.067a21.14 21.14 0 0 0-2.444-.435 12.545 12.545 0 0 0-3.213-.014 6.945 6.945 0 0 0-3.699 1.488 4.908 4.908 0 0 0-1.58 2.178 5.984 5.984 0 0 0-.003 4.05c.242.65.63 1.237 1.136 1.714.437.422.932.78 1.47 1.065.708.38 1.458.675 2.235.878.257.077.512.158.766.243l.385.141.11.045c.38.136.726.35 1.018.628.202.19.358.423.455.683.06.237.061.485.003.723a1.536 1.536 0 0 1-.744.892 3.691 3.691 0 0 1-1.239.387 9 9 0 0 1-1.92.097 21.973 21.973 0 0 1-2.507-.334c-.433-.09-.864-.19-1.291-.303l-.16-.04zM30.546 56.607h4.73V37.846h-4.73zM85.305 43.386a4.934 4.934 0 1 1 6.157 7.711 4.934 4.934 0 0 1-6.157-7.71m-6.867 3.848A9.87 9.87 0 0 0 90.44 56.72a9.629 9.629 0 0 0 3.157-17.729 9.934 9.934 0 0 0-15.16 8.244"></path><use href="#bar_short" x="0"></use><use href="#bar_tall" x="0"></use><use href="#bar_grande" x="0"></use><use href="#bar_tall" x="25.875"></use><use href="#bar_short" x="51.75"></use><use href="#bar_tall" x="51.75"></use><use href="#bar_grande" x="51.75"></use><use href="#bar_tall" x="77.625"></use><use href="#bar_short" x="103.375"></use></g>
+                </svg>
             </header>
             <midpage id="midpage" class="flex flex-grow flex-row">
                 <div class="left">
@@ -34,7 +37,7 @@
                             {% endif %}
                         </div>
                     </div>
-                    <div class="history flex-col flex-grow">
+                    <div id="CallHistory_Container" class="history flex-col flex-grow">
                         {% if history_list %}
                         {% for call in history_list %}
                         <div class="history-entry flex flex-row push-apart">
@@ -74,7 +77,7 @@
                         <p class="whiteBackgroundText hidden" id="No_calls">No active calls.</p>
                         {% for activeCall in activeCall_list %}
                         <!-- Need to use ID provided by call list rather than API, 'z' is the wrong one -->
-                        <div class="call whiteBackgroundText {% if activeCall.state == 'connected' %}connected{% endif %}" id="{{ activeCall.id }}">
+                        <div class="call whiteBackgroundText {% if activeCall.state == 'connected' %}connected{% endif %} show" id="{{ activeCall.id }}">
                             <div>
                                 <p>
                                     {{ activeCall.remoteParty.name }} [{{ activeCall.state }}]
@@ -113,149 +116,4 @@
             </footer> -->
         </wrapper>
     </body>
-    <!-- <script>
-
-        var loc = window.location
-
-        var wsStart = 'ws://'
-        if (loc.protocol == 'https:'){
-            wsStart = 'wss://'
-        }
-        
-        var endpoint = wsStart + loc.host + loc.pathname
-        console.log(endpoint)
-
-        var socket = new WebSocket(endpoint)
-        console.log(socket)
-        
-        socket.onmessage = function(e){
-            console.log("message", e)
-            try {
-                var data = JSON.parse(e.data);
-            }catch {
-                var data = e.data;
-            }
-                
-            console.log(data)
-            if (data.command == "call_update") {
-                console.log("Sending to UpdateCall")
-                UpdateCall(data.data);
-            }
-        }
-        socket.onopen = function(e){
-            console.log("open", e)
-            //socket.send("Test Return Data")
-        }
-        socket.onerror = function(e){
-            console.log("error", e)
-        }
-        socket.onclose = function(e){
-            console.log("close", e)
-        }
-
-        function DoCommand(command, data) {
-            var payload = `${command}_${data}`
-            console.log("send", payload)
-            socket.send(payload)
-        }
-
-        function CustomDial() {
-            var address = document.getElementById('dial_address').value;
-            if (address != "") {
-                console.log("Dialing: "+address)
-                var payload = `dial_${address}`
-                socket.send(payload)
-            }
-        }
-
-        function UpdateCall(data) {
-            console.log("Inside UpdateCall")
-            console.log(data)
-            if (data.state == 'connected') {
-                connected = 'connected'
-                hold_resume = `<input type="button" value="Hold" class="button dark" onClick="DoCommand('hold', this.parentNode.parentNode.parentNode.parentNode.id)">`
-            } else if (data.state == 'held') {
-                connected = ''
-                hold_resume = `<input type="button" value="Resume" class="button dark" onClick="DoCommand('resume', this.parentNode.parentNode.parentNode.parentNode.id)">`
-            } else if (data.state == 'disconnected') {
-                console.log("In disconnect")
-                document.getElementById(data.callId).remove();
-                CheckAnyCalls()
-                return;
-            } else {
-                connected = ''
-                hold_resume = '<input type="button" value="Hold" class="button dark">'
-            }
-
-            try {
-                var target = document.getElementById(data.callId); //Edit existing call
-                target.innerHTML = (
-                    `<div>
-                        <p>
-                            ${data.remoteParty.name} [${data.state}]
-                            <br>
-                            ${data.remoteParty.number}
-                        </p>
-                    </div>
-                    <div class="flex space-around">
-                        <form class="flex flex-row flex-wrap centered">
-                            {% csrf_token %}
-                            <div class="flex flex-col">
-                                ${hold_resume}
-                                <input type="button" value="Transfer" class="button dark">  
-                            </div>
-                            <div class="flex flex-col">
-                                <input type="button" value="Park" class="button dark">  
-                                <input type="button" value="Divert" class="button dark">  
-                            </div>
-                            <input type="button" value="Hangup" class="button negative dark" onClick="DoCommand('hangup', this.parentNode.parentNode.parentNode.id)">  
-                        </form>
-                    </div>`
-                )
-                target.classList = `call ${connected}`
-                console.log("Edit Made")
-            } catch (error) {
-                console.log("Catch Running")
-                //Create New call
-                document.getElementById('Call_container').innerHTML = (
-                    document.getElementById('Call_container').innerHTML +
-                    `<div class="call ${connected}" id="${data.callId}">
-                        <div>
-                            <p>
-                                ${data['remoteParty']['name']} [${data['state']}]
-                                <br>
-                                ${data.remoteParty.number}
-                            </p>
-                        </div>
-                        <div class="flex space-around">
-                            <form class="flex flex-row flex-wrap centered">
-                                {% csrf_token %}
-                                <div class="flex flex-col">
-                                    ${hold_resume}
-                                    <input type="button" value="Transfer" class="button dark">  
-                                </div>
-                                <div class="flex flex-col">
-                                    <input type="button" value="Park" class="button dark">  
-                                    <input type="button" value="Divert" class="button dark">  
-                                </div>
-                                <input type="button" value="Hangup" class="button negative dark">  
-                            </form>
-                        </div>
-                    </div>`
-                )
-            }
-            CheckAnyCalls()
-        }
-        function CheckAnyCalls() {
-            divs = document.getElementsByClassName('call')
-            console.log(`Found Div's ${divs}`)
-            if (document.getElementById('Call_container').contains(divs[0])) {
-                document.getElementById('No_calls').className = "whiteBackgroundText hidden";
-            } else {
-                document.getElementById('No_calls').className = "whiteBackgroundText shown";
-            }
-            
-        }
-
-    </script> -->
 </html>

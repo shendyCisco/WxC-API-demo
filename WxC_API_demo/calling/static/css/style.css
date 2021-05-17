@@ -75,6 +75,7 @@ wrapper {
     background-color: #fff;
     box-shadow: 0 2px 5px 0 rgba(0,0,0,.12);
     height: 100vh;
+    overflow: hidden
 }
 @media only screen and (max-width:1600px) {
     wrapper {
@@ -89,8 +90,9 @@ wrapper {
     width: 100vw;
     height: 100vh;
     background-color: #fff;
-    opacity: 10%;
+    opacity: 10% !important;
     z-index: 9;
+    transition: all 0.2s ease-in-out;
 }
 .LightBox_Wrapper {
     position: absolute;
@@ -108,18 +110,25 @@ wrapper {
     padding: 2rem;
     border-radius: 5px;
     z-index: 10;
+    transition: all 0.2s ease-in-out;
+    opacity: 0;
 }
+
 
 header {
     width: 100%;
     height: 80px;
     box-shadow: 0 2px 5px 0 rgba(0,0,0,.12);
     overflow: hidden;
+    transition: all 0.2s ease-in-out;
+    align-items: center;
+    padding-left: 5px;
 }
 
 midpage {
     width: 100%;
     max-height: calc(100vh - 80px);
+    transition: all 0.2s ease-in-out;
 }
 
 .left {
@@ -142,53 +151,6 @@ midpage {
     padding: 1rem;
 }
 
-/* Generic Formatting */
-.flex {
-    display: flex;
-}
-.flex-grow {
-    flex-grow: 1;
-}
-
-.flex-col {
-    flex-direction: column;
-}
-.flex-row {
-    flex-direction: row;
-}
-.flex-wrap {
-    flex-wrap: wrap;
-}
-
-.centered {
-    justify-content: center;
-    align-items: center;
-    text-align: center;
-}
-.push-apart {
-    justify-content: space-between;
-}
-.space-around {
-    justify-content: space-around;
-}
-
-.spacer {
-    height: 1rem;
-}
-
-.shown {
-    visibility: visible;
-    position: relative;
-}
-.hidden {
-    visibility: hidden;
-    position: absolute;
-}
-
-.blurred {
-    filter: blur(7px);
-}
-
 
 /* Generic Form Styling */
 .formItemMargin {
@@ -203,6 +165,10 @@ midpage {
     color: #0d274d;
     font-size: 16px;
     margin: 0.5rem;
+    transition: all 0.2s ease-in-out;
+    align-self: center;
+    height: fit-content;
+    cursor: pointer;
 }
 .button:hover {
     background-color: #33c9ef;
@@ -345,6 +311,8 @@ input:checked + .slider:before {
     border-left: #fff 1px solid;
     margin-top: 1rem;
     padding: 0 1rem;
+    transition: all 0.2s ease-in-out;
+    max-height: 1000px;
 }
 .history-entry:hover {
     background-color: #243c5e;
@@ -365,8 +333,10 @@ placed {
 missed {
     color: red;
 }
-
-
+.newHistoryCall {
+    max-height: 0px;
+    overflow: hidden;
+}
 /* Dial */
 
 
@@ -382,6 +352,8 @@ missed {
     /* background-color: rgba(77,77,77,.3); */
     margin: 1rem;
     box-shadow: 0 2px 5px 0 rgba(0,0,0,.12);
+    transition: all 0.2s ease-in-out;
+    opacity: 0%;
 }
 .call .button {
     width: 95px;
@@ -389,4 +361,55 @@ missed {
 .connected {
     background-color: #6ebe4a;
     border: #6ebe4a solid 1px;
+}
+
+/* Generic Formatting */
+.flex {
+    display: flex;
+}
+.flex-grow {
+    flex-grow: 1;
+}
+
+.flex-col {
+    flex-direction: column;
+}
+.flex-row {
+    flex-direction: row;
+}
+.flex-wrap {
+    flex-wrap: wrap;
+}
+
+.centered {
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+.push-apart {
+    justify-content: space-between;
+}
+.space-around {
+    justify-content: space-around;
+}
+
+.spacer {
+    height: 1rem;
+}
+
+.shown {
+    visibility: visible;
+    position: relative;
+}
+.hidden {
+    visibility: hidden;
+    position: absolute;
+}
+
+.blurred {
+    filter: blur(7px);
+}
+
+.show {
+    opacity: 100%;
 }

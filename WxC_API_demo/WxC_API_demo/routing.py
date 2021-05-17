@@ -9,7 +9,8 @@ application = ProtocolTypeRouter({
         AuthMiddlewareStack(
             URLRouter(
                 [
-                    url("calling/interface/", ChatConsumer()),
+                    #url("calling/interface/<uuid:session_id>", ChatConsumer.as_asgi()),
+                    url("calling/interface/", ChatConsumer.as_asgi()),
                     #url("calling/webhook/", testConsumer()),
                 ]
             )
