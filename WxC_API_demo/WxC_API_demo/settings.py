@@ -43,6 +43,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    'django.middleware.cache.UpdateCacheMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -50,9 +51,38 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'django.middleware.cache.FetchFromCacheMiddleware', 
 ]
 
-SESSION_ENGINE = 'django.contrib.sessions.backends.signed_cookies'
+SESSION_ENGINE = 'redis_sessions.session'
+SESSION_REDIS = {
+    'unix_domain_socket_path': '/var/run/redis/redis.sock',
+    'db': 0,
+    #'password': 'password',
+    'prefix': 'session',
+    'socket_timeout': 1,
+    'retry_on_timeout': False
+}
+
+# SESSION_ENGINE = 'django.contrib.sessions.backends.cache'
+# #SESSION_REDIS_UNIX_DOMAIN_SOCKET_PATH = '/var/run/redis/redis.sock'
+
+# CACHES = {
+#     'default': {
+#         'BACKEND': 'redis_cache.RedisCache',
+#         'LOCATION': '/var/run/redis/redis.sock',
+#     },
+# }
+
+# SESSION_REDIS = {
+#     'host': 'localhost',
+#     'port': 6379,
+#     'db': 0,
+#     'password': 'password',
+#     'prefix': 'session',
+#     'socket_timeout': 1,
+#     'retry_on_timeout': False
+#     }
 
 ROOT_URLCONF = 'WxC_API_demo.urls'
 

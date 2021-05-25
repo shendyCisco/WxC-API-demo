@@ -47,10 +47,6 @@
                                 <br>
                                 {{ call.time }}
                             </p>
-                            <!-- <form class="flex centered" action="{% url 'dial' %}" method="POST">
-                                {% csrf_token %}
-                                <button type="submit" name="numberSubmit" value="{{ call.number }}" class="button positive">Dial</button>
-                            </form> -->
                             <button onclick="DoCommand('dial', '{{ call.number }}')" type="submit" name="numberSubmit" value="{{ call.number }}" class="button positive">Dial</button>
                         </div>
                         {% endfor %}
@@ -67,6 +63,7 @@
                         <div class="flex centered">
                             <input id="dial_address" type="text" class="textbox" autocomplete="off" placeholder="Number or Extension">
                             <input onclick="CustomDial()" type="submit" value="Dial" class="button positive">
+                            <input onclick="Retrieve()" type="submit" value="Retrieve" class="button positive">
                         </div>
                         <div class="flex flex-grow centered">
                             <h3>Webex Call Controls API Demo Platform</h3>

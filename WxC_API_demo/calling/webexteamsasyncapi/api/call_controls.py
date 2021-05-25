@@ -105,6 +105,11 @@ class Call_ControlsAPI:
         url = f'{self._endpoint}/dial'
         r = await self._session.post(url=url, json=params, success={201})
         return Post_Call.parse_obj(r)
+    
+    async def retrieve(self, destination: str):
+        url = f'{self._endpoint}/retrieve'
+        r = await self._session.post(url=url, json={'destination': destination}, success={201})
+        return Post_Call.parse_obj(r)
 
     async def hold(self, call_id: str):
         url = f'{self._endpoint}/hold'

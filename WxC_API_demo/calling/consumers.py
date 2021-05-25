@@ -126,6 +126,8 @@ class ChatConsumer(AsyncWebsocketConsumer):
         if instructions[0] == 'dial':
             #print(f"Dial: {instructions[1]}")
             asyncio.create_task(dial(params[0],token))
+        elif instructions[0] == 'retrieve':
+            asyncio.create_task(retrieve(params[0],token))    
         elif instructions[0] == 'hold':
             asyncio.create_task(hold(params[0],token))    
         elif instructions[0] == 'resume':
@@ -223,6 +225,10 @@ class ChatConsumer(AsyncWebsocketConsumer):
 async def dial(number, token):
     async with WebexTeamsAsyncAPI(access_token=token) as api:
         await api.call_controls.dial(number)
+
+async def retrieve(number, token):
+    async with WebexTeamsAsyncAPI(access_token=token) as api:
+        await api.call_controls.retrieve(number)
 
 async def hold(call_id, token):
     print("in hold")

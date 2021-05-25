@@ -66,6 +66,15 @@ function CustomDial() {
     }
 }
 
+function Retrieve() {
+    var address = document.getElementById('dial_address').value;
+    if (address != "") {
+        console.log("Retrieving: "+address)
+        var payload = `retrieve_${address}`
+        socket.send(payload)
+    }
+}
+
 // function CallIn_Animation(id) {
 //     console.log("In CallIn_Animation")
 //     var newHistoryCall = document.getElementById(id)
@@ -181,7 +190,7 @@ function ShowLightBox(purpose, id) {
         case "park":
             var form = (
                 `<h2>Park Call</h2>
-                <p>###By parking a call it will be redirected to the destination address, the destination will recieve a call from the current recipient.###</p>
+                <p>You can park a call against an extension, this extension can be retreived by another user. If the call isn't retrieved the parker of the call (you) will be recalled.<br>By selecting group park the destination will be ignored and anyone in the group park can pick up the call.</p>
 
                 <div class="flex flex-row">
                     <div class="flex flex-col centered space-around">

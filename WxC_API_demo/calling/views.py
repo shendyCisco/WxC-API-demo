@@ -183,20 +183,20 @@ def authenticate(request):
         
 
 #Dialing functions
-def dial(request):
+# def dial(request):
 
-    async def dial(number):
-        async with WebexTeamsAsyncAPI(access_token=token) as api:
-            await api.call_controls.dial(number)
+#     async def dial(number):
+#         async with WebexTeamsAsyncAPI(access_token=token) as api:
+#             await api.call_controls.dial(number)
 
-    if request.method == "POST":
-        token = request.session["token"]
-        number = request.POST.get("numberSubmit")
-        print(number)
-        asyncio.run(dial(number))
+#     if request.method == "POST":
+#         token = request.session["token"]
+#         number = request.POST.get("numberSubmit")
+#         print(number)
+#         asyncio.run(dial(number))
 
 
-    return redirect('/calling/')
+#     return redirect('/calling/')
 
 #Webhook Response Test
 
