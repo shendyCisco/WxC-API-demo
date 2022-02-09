@@ -42,7 +42,7 @@ def interface(request, session_id = None):
                 history = await api.call_controls.history() 
                 return history
             except:
-                return ["Failed"]
+                return None
 
     async def get_calls():
         async with WebexTeamsAsyncAPI(access_token=token) as api:
@@ -50,8 +50,7 @@ def interface(request, session_id = None):
                 calls = await api.call_controls.calls()
                 return calls
             except:
-                print(f"get_calls failed:")
-                return ["Failed"]
+                return None
         
     def takeTime(elem):
         return elem.time
@@ -61,7 +60,7 @@ def interface(request, session_id = None):
     tokenOwner = request.session.get('tokenOwner', None)
 
     #Create default variables incase nothing is filled, prevents error when making context and can be handled on template
-    class history_list():
+    class history_list(): ##DOESN'T WORK IF NO CALLS HAVE BEEN MADE FROM ACCOUNT YET
         items = None
     call_list = None
 
@@ -74,21 +73,23 @@ def interface(request, session_id = None):
             call_list = asyncio.run(get_calls())
             #print(history_list)
             
-            if history_list == ["Failed"] or call_list == {"Failed"}: #Handles if token expires while logged in
-                request.session.delete("token")
-                request.session.delete("tokenOwner")
+            if history_list == None or call_list == None: #Handles if token expires while logged in
+                # request.session.delete("token")
+                # request.session.delete("tokenOwner")
+                del request.session["token"]
+                del request.session["tokenOwner"]
                 return render(request, 'error.html', context={'message': 'There was a problem retrieving your information, please make sure your account has the correct priviledges.'})
         else:
             return render(request, 'error.html', context={'message': 'There was a problem retrieving your information, please make sure your account has the correct priviledges.'})
 
-        print(history_list[0].time)
-        print(len(history_list))
-        for i in range(0,len(history_list)):
-            parsedDate = parse(str(history_list[i].time))
-            history_list[i].time = parsedDate.strftime("%B %d, %Y, %H:%M %p")
+        # print(history_list[0].time)
+        # print(len(history_list))
+        if len(history_list) > 0:
+            for i in range(0,len(history_list)):
+                parsedDate = parse(str(history_list[i].time))
+                history_list[i].time = parsedDate.strftime("%B %d, %Y, %H:%M %p")
         
-
-        history_list.sort(reverse=True, key=takeTime)
+            history_list.sort(reverse=True, key=takeTime)
     
 
     context = {
@@ -143,7 +144,7 @@ def authenticate(request):
             #                                         client_secret="c69a11d7850b0f717c9c75b70c4eb7edfeff145ec193703d29238bc9eb249bd5",
             #                                         code=code,
             #                                         redirect="http%3A%2F%2F192.168.1.105:8000%2Fcalling%2Fredirect%2F")
-        uri = "https://webexapis.com/v1/access_token?"+"grant_type=authorization_code&"+"client_id=Cd612384d48b1561c4ae0066841a03d6eeb0ed0cf2b2d91308ec76d493cac3667&"+"client_secret=c69a11d7850b0f717c9c75b70c4eb7edfeff145ec193703d29238bc9eb249bd5&"+f"code={code}&"+"redirect_uri=http%3A%2F%2F192.168.1.105:8000%2Fcalling%2Fredirect%2F"
+        uri = "https://webexapis.com/v1/access_token?"+"grant_type=authorization_code&"+"client_id=Cd612384d48b1561c4ae0066841a03d6eeb0ed0cf2b2d91308ec76d493cac3667&"+"client_secret=c69a11d7850b0f717c9c75b70c4eb7edfeff145ec193703d29238bc9eb249bd5&"+f"code={code}&"+"redirect_uri=http%3A%2F%2F192.168.1.139:8000%2Fcalling%2Fredirect%2F"
         header = {'Content-type': 'application/x-www-form-urlencoded'}
         r = requests.post(url=uri, headers=header)
         json_data = json.loads(r.text)
@@ -156,6 +157,7 @@ def authenticate(request):
             return f'{me.first_name} {me.last_name}'
 
     if request.method == "GET":
+        print("Method == GET")
         if request.GET.get('state') == "AccessGranted":
             print("Access Granted!")
             code = request.GET.get('code')
@@ -176,6 +178,7 @@ def authenticate(request):
             return redirect(f"/calling/interface/") #{uniqueuid}")
             
         print(request.GET.get('state'))
+        print("STATE WAS NOT ACCESSGRANTED")
         return redirect("/calling/") #If state is not what was sent
     else:
         return redirect("/calling/") #If not GET
@@ -238,20 +241,6 @@ def webhook(request):
         r_data = json.loads(raw)
         print(r_data)
         r_data['command'] = "call_update"
-        callId_short_list = base64.b64decode(r_data['data']['callId']+'==').decode('utf-8').split('/')
-        webhookId_list = base64.b64decode(r_data['id']+'==').decode('utf-8').split('/')
-        print(f"Webhook ID: {webhookId_list}")
-        if callId_short_list[2] == "us":
-            callId_short_list[2] = webhookId_list[2]
-        callId_long = callId_short_list.pop(0)
-        for i in callId_short_list:
-            callId_long += f"/{i}"
-        r_data['data']['callId'] = base64.b64encode(bytes(callId_long,'utf-8')).decode('utf-8').strip('=') #creates id by encoding string in base64 utf-8 then converts back to string value and strips '=' off the end
-        
-        print(f"Short CallID List: {callId_short_list}")
-        print(f"Long CallID: {callId_long}")
-        print(f"CallID: {r_data['data']['callId']}")
-        #r_data['data']['callId'] = r_data['data']['callId'][:19] + r_data['id'][19:44] + r_data['data']["callId"][20:]
         channel = WebexUserSession.objects.get(webhook_id=r_data['id'])
         channel_layer = get_channel_layer()
         print(f"Sending to:\nChannel_name: {channel.channel_name}\nWebhook ID: {r_data['id']}")

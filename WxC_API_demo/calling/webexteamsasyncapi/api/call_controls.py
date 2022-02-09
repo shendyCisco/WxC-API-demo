@@ -49,7 +49,7 @@ class Call(CamelModel):
     recall: Optional[Recall]
     recording_state: str
 
-class Items(CamelModel):
+class Item(CamelModel):
     type: str
     name: Optional[str]
     number: str
@@ -57,7 +57,7 @@ class Items(CamelModel):
     time: str #ISO-8601 date
 
 class History(CamelModel):
-    items: List[Items]
+    items: List[Item]
 
 
 class Post_Call(CamelModel): #Post fields
@@ -79,11 +79,13 @@ class Call_ControlsAPI:
         url = self._endpoint
         r = await self._session.get(url=url)
         activeCalls = []
+        print(f"R = {r}")
         if r != {}:
+            print("In If")
             for d in r['items']:
+                print(f"D = {d}")
                 activeCalls.append(d)
-        else:
-            activeCalls = None
+        print(f"Active Calls = {activeCalls}")
         return activeCalls
     
     async def history(self, type: Optional[str] = None) -> History:
@@ -91,13 +93,14 @@ class Call_ControlsAPI:
         params.pop('self')
         url = f'{self._endpoint}/history'
         r = await self._session.get(url=url, params=params)
-        history_list =  History.parse_obj(r)
-        items = history_list.items
-        print(items)
-        #print(type(items))
-        print("BEFORE")
-        #print(type(items[0]))
-        print("AFTER")
+        items = None
+        try:
+            history_list =  History.parse_obj(r)
+            items = history_list.items
+            print("Has History")
+        except:
+            print("No History")
+            items = []
         return items
 
     async def dial(self, destination: str) -> Post_Call:
